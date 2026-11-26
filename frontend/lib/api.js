@@ -1,7 +1,19 @@
 // Small helper around fetch() that talks to the Express API.
 // It adds the JWT token automatically and turns errors into exceptions.
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Live backend on Vercel. Used whenever the site is NOT opened on localhost.
+const PRODUCTION_API_URL = 'https://cyber-guard-gilt.vercel.app/api';
+// Local development backend (can be changed in frontend/.env.local).
+const LOCAL_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+export function getApiUrl() {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1') return PRODUCTION_API_URL;
+  }
+  return LOCAL_API_URL;
+}
+
 const TOKEN_KEY = 'cyberguard_token';
 
 export function getToken() {
@@ -29,13 +41,13 @@ export async function api(path, { method = 'GET', body, auth = true } = {}) {
 
   let response;
   try {
-    response = await fetch(`${API_URL}${path}`, {
+    response = await fetch(`${getApiUrl()}${path}`, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new Error('Cannot reach the CyberGuard server. Is the backend running on port 5000?');
+    throw new Error('Cannot reach the CyberGuard server. Please try again in a moment.');
   }
 
   let data = {};
