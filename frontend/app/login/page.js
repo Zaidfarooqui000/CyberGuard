@@ -74,11 +74,6 @@ export default function LoginPage() {
         No account yet?{' '}
         <Link href="/register" className="font-medium text-cyan-400 hover:text-cyan-300">Create one</Link>
       </p>
-      <div className="mt-6 rounded-xl border border-navy-700 bg-navy-850 p-3 text-xs text-slate-400">
-        <p className="font-semibold text-slate-300">Demo accounts (sample data)</p>
-        <p>Admin: admin@cyberguard.com / Admin@123</p>
-        <p>User: ali@student.com / User@1234</p>
-      </div>
     </AuthCard>
   );
 }
