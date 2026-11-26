@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* ---------- CyberGuard theme ---------- */
+@theme {
+  --color-navy-950: #040914;
+  --color-navy-900: #08111f;
+  --color-navy-850: #0b1628;
+  --color-navy-800: #0f1d33;
+  --color-navy-700: #16294a;
+  --color-navy-600: #1f3a66;
+
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --font-mono: "Cascadia Code", Consolas, "Courier New", monospace;
+
+  --animate-fade-up: fade-up 0.5s ease-out both;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-scan: scan 3s linear infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes scan {
+    0% { top: 0%; }
+    100% { top: 100%; }
+  }
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-navy-950);
+  color: #f1f5f9;
+  font-family: var(--font-sans);
+}
+
+/* Subtle cyber grid background */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Reusable component classes (Tailwind v4 custom utilities) */
+@utility card {
+  @apply rounded-2xl border border-navy-700 bg-navy-900/80 p-5 shadow-lg shadow-black/20 backdrop-blur;
+}
+@utility input {
+  @apply w-full rounded-xl border border-navy-600 bg-navy-850 px-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium text-slate-300;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-cyan-500/20 hover:from-blue-500 hover:to-cyan-400;
+}
+@utility btn-secondary {
+  @apply btn border border-navy-600 bg-navy-800 text-slate-200 hover:border-cyan-400/60 hover:text-white;
+}
+@utility btn-danger {
+  @apply btn border border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20;
+}
+@utility table-wrap {
+  @apply overflow-x-auto rounded-xl border border-navy-700;
+}
+@utility data-table {
+  @apply w-full min-w-[640px] text-left text-sm;
+  & th {
+    @apply bg-navy-800 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400;
+  }
+  & td {
+    @apply border-t border-navy-700 px-4 py-3 text-slate-200;
+  }
+  & tbody tr {
+    @apply transition hover:bg-navy-800/60;
+  }
+}
+
+/* Printing the security report: white paper, hide app chrome */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-area {
+    color: #000 !important;
+  }
+  .print-area * {
+    color: #000 !important;
+    background: transparent !important;
+    border-color: #999 !important;
+    box-shadow: none !important;
+  }
+}

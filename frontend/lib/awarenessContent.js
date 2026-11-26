@@ -1,0 +1,100 @@
+// Educational content for the Cybersecurity Awareness page.
+export const topics = [
+  {
+    id: 'phishing',
+    icon: 'Mail',
+    title: 'What is phishing?',
+    summary: 'A cyber attack where criminals pretend to be a trusted organisation to trick you into giving away information.',
+    points: [
+      'Arrives as an email, SMS ("smishing"), phone call ("vishing") or social media message.',
+      'Usually imitates banks, delivery companies, universities, or popular services like PayPal and Microsoft.',
+      'The goal is to steal passwords, card numbers, OTP codes, or to make you install malware.',
+      'Spear phishing targets a specific person using personal details found online.',
+    ],
+  },
+  {
+    id: 'malware',
+    icon: 'Bug',
+    title: 'What is malware?',
+    summary: 'Malicious software designed to damage devices, steal data, or give attackers control of a computer.',
+    points: [
+      'Types include viruses, worms, trojans, spyware, keyloggers and adware.',
+      'Often spread through email attachments, pirated software, fake updates and infected USB drives.',
+      'Signs: slow computer, strange pop-ups, unknown programs, or accounts sending messages you did not write.',
+      'Protection: keep software updated, use antivirus, and never run files from unknown senders.',
+    ],
+  },
+  {
+    id: 'ransomware',
+    icon: 'Lock',
+    title: 'What is ransomware?',
+    summary: 'Malware that encrypts your files and demands payment (usually cryptocurrency) to unlock them.',
+    points: [
+      'Commonly delivered through phishing emails with malicious attachments or links.',
+      'Paying the ransom does not guarantee you will get your files back and funds further crime.',
+      'Regular offline or cloud backups are the best defence – you can restore without paying.',
+      'Disconnect an infected device from the network immediately and contact IT support.',
+    ],
+  },
+  {
+    id: 'social-engineering',
+    icon: 'Users',
+    title: 'What is social engineering?',
+    summary: 'Manipulating people – instead of hacking computers – to reveal confidential information or take unsafe actions.',
+    points: [
+      'Exploits human emotions: fear, urgency, curiosity, greed and the desire to help.',
+      'Examples: fake IT support calls, "CEO" asking for urgent transfers, USB drives left in parking lots.',
+      'Pretexting: the attacker invents a believable story (e.g. "I am from the bank fraud team").',
+      'Rule of thumb: verify any unusual request through a separate, trusted channel.',
+    ],
+  },
+  {
+    id: 'fake-websites',
+    icon: 'Globe',
+    title: 'What are fake websites?',
+    summary: 'Copies of real websites built to steal logins and payment details, or to sell products that never arrive.',
+    points: [
+      'Use look-alike domains such as "paypa1.com", "rnicrosoft.com" or "amazon-security-check.top".',
+      'Can have a padlock (HTTPS) – encryption does NOT mean the site is legitimate.',
+      'Often reached through ads, shortened links, or links in phishing emails.',
+      'Always type important addresses yourself or use saved bookmarks.',
+    ],
+  },
+  {
+    id: 'data-theft',
+    icon: 'Fingerprint',
+    title: 'How do hackers steal personal information?',
+    summary: 'Attackers combine technical tricks and human manipulation to collect your data.',
+    points: [
+      'Phishing pages and fake login forms that capture what you type.',
+      'Data breaches – leaked passwords are reused to break into your other accounts ("credential stuffing").',
+      'Unsafe public Wi-Fi, malicious browser extensions, and keylogger malware.',
+      'Oversharing on social media (birthdays, pet names, school) helps guess security questions.',
+    ],
+  },
+  {
+    id: 'protect-accounts',
+    icon: 'ShieldCheck',
+    title: 'How to protect online accounts',
+    summary: 'A few habits block the vast majority of account takeover attempts.',
+    points: [
+      'Use a unique, long password (or passphrase) for every account – a password manager helps.',
+      'Turn on two-factor authentication (2FA), preferably with an authenticator app.',
+      'Never share OTP codes or passwords with anyone, including "support staff".',
+      'Review account activity and log out of devices you no longer use.',
+    ],
+  },
+  {
+    id: 'recognize-emails',
+    icon: 'MailWarning',
+    title: 'How to recognize suspicious emails',
+    summary: 'Look for these red flags before you click, reply, or download anything.',
+    points: [
+      'Urgent or threatening tone: "Your account will be suspended in 24 hours!"',
+      'Generic greetings like "Dear Customer" and spelling or grammar mistakes.',
+      'The sender address does not match the organisation (e.g. "paypal-support@gmail.com").',
+      'Requests for passwords, card details, OTPs, or payment of a "fee" to receive a prize.',
+      'Links whose real address (shown on hover) differs from the text or goes to an odd domain.',
+    ],
+  },
+];

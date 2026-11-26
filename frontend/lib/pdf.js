@@ -1,0 +1,141 @@
+// Builds a downloadable PDF security report with jsPDF.
+import { jsPDF } from 'jspdf';
+import { autoTable } from 'jspdf-autotable';
+import { formatDate } from './format';
+
+const LEVEL_RGB = {
+  SAFE: [34, 197, 94],
+  SUSPICIOUS: [202, 138, 4],
+  'HIGH RISK': [220, 38, 38],
+};
+
+// `report` is the scan object returned by the API.
+export function downloadReportPdf(report) {
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 40;
+  const contentWidth = pageWidth - margin * 2;
+  let y = 0;
+
+  // Header bar
+  doc.setFillColor(8, 17, 31);
+  doc.rect(0, 0, pageWidth, 80, 'F');
+  doc.setTextColor(34, 211, 238);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.text('CyberGuard', margin, 38);
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Phishing Detection & Email Security – Security Report', margin, 58);
+  y = 110;
+
+  // Summary block
+  const isUrl = report.type === 'url';
+  const submitted = isUrl
+    ? report.submittedUrl
+    : report.originalContent || (report.meta && report.meta.excerpt) || 'Email content (not stored for privacy)';
+
+  autoTable(doc, {
+    startY: y,
+    theme: 'grid',
+    styles: { fontSize: 10, cellPadding: 6, overflow: 'linebreak' },
+    columnStyles: { 0: { cellWidth: 130, fontStyle: 'bold', fillColor: [241, 245, 249] } },
+    body: [
+      ['Report ID', `${isUrl ? 'URL' : 'EMAIL'}-${report.id ?? '—'}`],
+      ['Scan type', isUrl ? 'URL phishing analysis' : 'Email phishing analysis'],
+      [isUrl ? 'Submitted URL' : 'Submitted email', String(submitted).slice(0, 1500)],
+      ...(isUrl && report.registeredDomain ? [['Registered domain', report.registeredDomain]] : []),
+      ...(!isUrl && report.meta && report.meta.senderDomain ? [['Sender domain', report.meta.senderDomain]] : []),
+      ['Scan date & time', formatDate(report.scannedAt)],
+      ['Risk score', `${report.riskScore} / 100`],
+      ['Risk level', report.riskLevel],
+    ],
+    didParseCell: (data) => {
+      if (data.row.index === data.table.body.length - 1 && data.column.index === 1) {
+        data.cell.styles.textColor = LEVEL_RGB[report.riskLevel] || [0, 0, 0];
+        data.cell.styles.fontStyle = 'bold';
+      }
+    },
+    margin: { left: margin, right: margin },
+  });
+  y = doc.lastAutoTable.finalY + 18;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(10);
+  doc.text(doc.splitTextToSize(report.summary || '', contentWidth), margin, y);
+  y += 22;
+
+  // Indicators
+  const indicators = (report.indicators || []).filter((i) => i.points > 0 || i.id === 'https_present');
+  autoTable(doc, {
+    startY: y,
+    head: [['Detected indicator', 'Explanation', 'Points']],
+    body: indicators.length
+      ? indicators.map((i) => [
+          i.title,
+          i.description + (i.matches && i.matches.length ? `\nMatched: ${i.matches.slice(0, 8).join(', ')}` : ''),
+          String(i.points),
+        ])
+      : [['No indicators triggered', 'None of the detection rules matched this content.', '0']],
+    styles: { fontSize: 9, cellPadding: 5, overflow: 'linebreak' },
+    headStyles: { fillColor: [29, 78, 216] },
+    columnStyles: { 0: { cellWidth: 130, fontStyle: 'bold' }, 2: { cellWidth: 45, halign: 'center' } },
+    margin: { left: margin, right: margin },
+  });
+  y = doc.lastAutoTable.finalY + 18;
+
+  // Checks performed
+  if (report.checks && report.checks.length) {
+    autoTable(doc, {
+      startY: y,
+      head: [['Check performed', 'Result', 'Detail']],
+      body: report.checks.map((c) => [c.name, c.passed ? 'PASS' : 'WARNING', c.detail || '']),
+      styles: { fontSize: 9, cellPadding: 5 },
+      headStyles: { fillColor: [8, 145, 178] },
+      didParseCell: (data) => {
+        if (data.section === 'body' && data.column.index === 1) {
+          data.cell.styles.textColor = data.cell.raw === 'PASS' ? [22, 163, 74] : [202, 138, 4];
+          data.cell.styles.fontStyle = 'bold';
+        }
+      },
+      margin: { left: margin, right: margin },
+    });
+    y = doc.lastAutoTable.finalY + 18;
+  }
+
+  // Recommendations
+  autoTable(doc, {
+    startY: y,
+    head: [['Recommended actions']],
+    body: (report.recommendations || []).map((r, idx) => [`${idx + 1}. ${r}`]),
+    styles: { fontSize: 9, cellPadding: 5 },
+    headStyles: { fillColor: [22, 163, 74] },
+    margin: { left: margin, right: margin },
+  });
+  y = doc.lastAutoTable.finalY + 20;
+
+  // Disclaimer
+  if (y > doc.internal.pageSize.getHeight() - 80) {
+    doc.addPage();
+    y = 50;
+  }
+  doc.setFontSize(8.5);
+  doc.setTextColor(100, 116, 139);
+  doc.text(doc.splitTextToSize(`${report.method || ''} ${report.disclaimer || ''}`, contentWidth), margin, y);
+
+  // Footer with page numbers
+  const pages = doc.getNumberOfPages();
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Generated by CyberGuard on ${new Date().toLocaleString()}  •  Page ${i} of ${pages}`,
+      margin,
+      doc.internal.pageSize.getHeight() - 20
+    );
+  }
+
+  doc.save(`cyberguard-${report.type}-report-${report.id ?? 'scan'}.pdf`);
+}
