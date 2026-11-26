@@ -8,6 +8,12 @@ import AuthCard from '@/components/AuthCard';
 import { Alert } from '@/components/ui';
 import { useAuth } from '@/lib/AuthContext';
 
+// Sample accounts created by backend/database/sample_data.sql
+const DEMO_ACCOUNTS = [
+  { role: 'Admin', email: 'admin@cyberguard.com', password: 'Admin@123' },
+  { role: 'User', email: 'ali@student.com', password: 'User@1234' },
+];
+
 export default function LoginPage() {
   const { login, user, loading } = useAuth();
   const router = useRouter();
@@ -74,6 +80,34 @@ export default function LoginPage() {
         No account yet?{' '}
         <Link href="/register" className="font-medium text-cyan-400 hover:text-cyan-300">Create one</Link>
       </p>
+
+      {/* Demo accounts – click a row to fill in the login form */}
+      <div className="mt-6 overflow-hidden rounded-xl border border-navy-700 text-xs">
+        <p className="bg-navy-800 px-3 py-2 font-semibold text-slate-300">Demo accounts (click to fill)</p>
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-slate-500">
+              <th className="px-3 py-1.5 font-medium">Role</th>
+              <th className="px-3 py-1.5 font-medium">Email</th>
+              <th className="px-3 py-1.5 font-medium">Password</th>
+            </tr>
+          </thead>
+          <tbody>
+            {DEMO_ACCOUNTS.map((acc) => (
+              <tr
+                key={acc.email}
+                onClick={() => setForm({ email: acc.email, password: acc.password })}
+                className="cursor-pointer border-t border-navy-700 text-slate-300 transition hover:bg-navy-800"
+                title={`Fill in the ${acc.role} login`}
+              >
+                <td className="px-3 py-2 font-semibold text-cyan-300">{acc.role}</td>
+                <td className="px-3 py-2 font-mono">{acc.email}</td>
+                <td className="px-3 py-2 font-mono">{acc.password}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </AuthCard>
   );
 }
