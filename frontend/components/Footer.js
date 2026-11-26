@@ -20,6 +20,7 @@ export default function Footer() {
       </div>
       <p className="border-t border-navy-800 py-4 text-center text-xs text-slate-500">
         © {new Date().getFullYear()} CyberGuard – Phishing Detection & Email Security System
+        <span className="mt-1 block text-slate-400">Created by Muhammad Zaid Farooqui</span>
       </p>
     </footer>
   );
