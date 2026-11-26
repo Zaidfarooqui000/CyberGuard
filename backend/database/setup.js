@@ -5,6 +5,7 @@ require('dotenv').config({ quiet: true });
 const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2/promise');
+const { sslOptions } = require('../config/db');
 
 async function run() {
   const connection = await mysql.createConnection({
@@ -12,6 +13,7 @@ async function run() {
     port: Number(process.env.DB_PORT) || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
+    ssl: sslOptions(), // needed for cloud MySQL (Aiven)
     multipleStatements: true, // only used here, for trusted local .sql files
   });
 
